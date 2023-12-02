@@ -11,13 +11,16 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pythonVersion: [10, 11, 12]
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v3
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.${{ matrix.pythonVersion }}"
       - name: Run black
         uses: psf/black@stable
       - name: Run black

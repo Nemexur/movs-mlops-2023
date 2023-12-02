@@ -1,0 +1,38 @@
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+# VSCode
+.vscode/
+# Poetry
+poetry.toml
+# Codestyle
+.cache
+.mypy_cache
+.ruff_cache
+.pytest_cache
+.coverage
+# Python
+__pycache__
+lib/
+lib64/
+*.egg-info/
+.installed.cfg
+*.egg
+eggs/
+.eggs/
+build/
+*env/
+.python-version
+# Other
+*.pkl
+*.bin
+*.tmp
+*.txt
+*.zsh
+*.bash
+*.jsonl
+*.html
+s3*
+.tokeirc
+data/
+dvc-store/

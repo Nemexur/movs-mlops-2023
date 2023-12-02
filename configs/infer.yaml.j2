@@ -1,0 +1,17 @@
+---
+dataset:
+  _target_: torch.utils.data.DataLoader
+  dataset:
+    _target_: src.datasets.jsonl.InMemory
+    path: {{ datasets }}/eval.jsonl
+  collate_fn:
+    _target_: src.datasets.jsonl.Collator
+  shuffle: false
+  batch_size: {{ batch_size }}
+  pin_memory: true
+  num_workers: 3
+
+model:
+  _target_: src.models.Classification
+  in_features: {{ in_features }}
+  num_classes: {{ num_classes }}

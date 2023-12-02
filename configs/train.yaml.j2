@@ -1,0 +1,48 @@
+---
+epochs: 10
+
+experiment:
+  _target_: experiments.classification.Experiment
+  _convert_: all
+  metrics:
+    accuracy:
+      _target_: ignite.metrics.Accuracy
+    precision:
+      _target_: ignite.metrics.Precision
+      average: macro
+    recall:
+      _target_: ignite.metrics.Recall
+      average: macro
+
+datasets:
+  train:
+    _target_: torch.utils.data.DataLoader
+    dataset:
+      _target_: src.datasets.jsonl.InMemory
+      path: {{ datasets }}/train.jsonl
+    collate_fn:
+      _target_: src.datasets.jsonl.Collator
+    batch_size: {{ batch_size }}
+    pin_memory: true
+    num_workers: 3
+  eval:
+    _target_: torch.utils.data.DataLoader
+    dataset:
+      _target_: src.datasets.jsonl.InMemory
+      path: {{ datasets }}/eval.jsonl
+    collate_fn:
+      _target_: src.datasets.jsonl.Collator
+    shuffle: false
+    batch_size: {{ batch_size }}
+    pin_memory: true
+    num_workers: 3
+
+model:
+  _target_: src.models.Classification
+  in_features: {{ in_features }}
+  num_classes: {{ num_classes }}
+
+optimizer:
+  _partial_: true
+  _target_: torch.optim.Adam
+  lr: 0.001

@@ -5,7 +5,7 @@
 1. Генерация
 
 ```bash
-poetry run python cmd/gen_dataset.py --seed 13 --n-samples 150000 > data/full-dataset.jsonl
+poetry run python scripts/gen_dataset.py --seed 13 --n-samples 150000 > data/full-dataset.jsonl
 ```
 
 2. Получим train/eval через miller

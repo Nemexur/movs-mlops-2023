@@ -30,6 +30,7 @@ ruff = "^0.1.6"
 pylint = "^3.0.2"
 jupyterlab = "^4.0.9"
 dvc = "^3.30.3"
+dvc-gdrive = "^2.20.0"
 
 [tool.pyright]
 reportGeneralTypeIssues = false

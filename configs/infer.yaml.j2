@@ -3,7 +3,7 @@ dataset:
   _target_: torch.utils.data.DataLoader
   dataset:
     _target_: src.datasets.jsonl.InMemory
-    path: {{ datasets }}/eval.jsonl
+    path: {{ datasets }}/eval-no-target.jsonl
   collate_fn:
     _target_: src.datasets.jsonl.Collator
   shuffle: false

@@ -15,9 +15,9 @@ python scripts/gen_dataset.py --seed 13 --n-samples 150000 > data/gen/full-datas
 2. Получим train/eval через miller
 
 ```bash
-mlr --jsonl filter '$part == "train"' + cut -f features,target data/full-dataset.jsonl > data/gen/train.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features,target data/full-dataset.jsonl > data/gen/eval.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features data/full-dataset.jsonl > data/gen/eval-no-target.jsonl
+mlr --jsonl filter '$part == "train"' + cut -f features,target data/gen/full-dataset.jsonl > data/gen/train.jsonl
+mlr --jsonl filter '$part == "eval"' + cut -f features,target data/gen/full-dataset.jsonl > data/gen/eval.jsonl
+mlr --jsonl filter '$part == "eval"' + cut -f features data/gen/full-dataset.jsonl > data/gen/eval-no-target.jsonl
 ```
 
 ### Breast Cancer
@@ -31,9 +31,9 @@ python scripts/cancer_dataset.py --seed 13 > data/cancer/full-dataset.jsonl
 2. Получим train/eval через miller
 
 ```bash
-mlr --jsonl filter '$part == "train"' + cut -f features,target data/full-dataset.jsonl > data/cancer/train.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features,target data/full-dataset.jsonl > data/cancer/eval.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features data/full-dataset.jsonl > data/cancer/eval-no-target.jsonl
+mlr --jsonl filter '$part == "train"' + cut -f features,target data/cancer/full-dataset.jsonl > data/cancer/train.jsonl
+mlr --jsonl filter '$part == "eval"' + cut -f features,target data/cancer/full-dataset.jsonl > data/cancer/eval.jsonl
+mlr --jsonl filter '$part == "eval"' + cut -f features data/cancer/full-dataset.jsonl > data/cancer/eval-no-target.jsonl
 ```
 
 ## Как обучить модель?

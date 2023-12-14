@@ -1,0 +1,6 @@
+outs:
+- md5: f91cfa44fca620dcac5fa145ba5d41f2.dir
+  size: 797821
+  nfiles: 97
+  hash: md5
+  path: cancer-model

@@ -2,12 +2,12 @@ import torch
 
 
 class Classification(torch.nn.Module):
-    def __init__(self, in_features: int, num_classes: int) -> None:
+    def __init__(self, in_features: int, num_classes: int, hidden_dim: int = 100) -> None:
         super().__init__()
         self._model = torch.nn.Sequential(
-            torch.nn.Linear(in_features=in_features, out_features=100),
+            torch.nn.Linear(in_features=in_features, out_features=hidden_dim),
             torch.nn.Tanh(),
-            torch.nn.Linear(in_features=100, out_features=num_classes),
+            torch.nn.Linear(in_features=hidden_dim, out_features=num_classes),
         )
         self._loss = torch.nn.CrossEntropyLoss()
 

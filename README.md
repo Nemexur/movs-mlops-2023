@@ -39,7 +39,7 @@ mlr --jsonl filter '$part == "eval"' + cut -f features data/full-dataset.jsonl >
 ## Как обучить модель?
 
 Конфиги для train/infer моделей сделаны через jinja,
-поэтому им обязательно нужно добавить переменные: datasets, batch_size, in_features, num_classes
+поэтому им обязательно нужно добавить переменные: datasets, batch_size, in_features, num_classes, hidden_dim (default=100)
 
 ```bash
 python experiments/cmd/train.py configs/train.yaml.j2 \

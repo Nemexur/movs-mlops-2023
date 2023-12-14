@@ -92,8 +92,6 @@ class ClassificationExperiment(Experiment):
                 automatic_checkpoint_naming=True,
             )
         self._seed_everything()
-        for m in self._metrics.values():
-            m.set_accelerator(accelerator)
         return accelerator
 
     def _get_trainer(

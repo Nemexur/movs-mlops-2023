@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 
 @click.command(
-    help="Breast cander dataset",
+    help="Breast cancer dataset",
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 @click.option("--seed", type=click.INT, default=13, show_default=True)
@@ -19,10 +19,7 @@ from sklearn.model_selection import train_test_split
     help="Output file. By default prints to stdout.",
     default="-",
 )
-def main(
-    out: TextIOWrapper,
-    seed: int = 13,
-) -> None:
+def main(out: TextIOWrapper, seed: int = 13) -> None:
     dataset = load_breast_cancer()
     features, target = dataset["data"], dataset["target"]
     train_features, eval_features, train_target, eval_target = train_test_split(

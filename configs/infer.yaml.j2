@@ -15,3 +15,4 @@ model:
   _target_: src.models.Classification
   in_features: {{ in_features }}
   num_classes: {{ num_classes }}
+  hidden_dim: {{ hidden_dim | default(100, true) }}

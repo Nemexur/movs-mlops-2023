@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
     help="Breast cancer dataset",
     context_settings={"help_option_names": ["-h", "--help"]},
 )
+@click.option("--test-size", type=click.FLOAT, default=0.2, show_default=True)
 @click.option("--seed", type=click.INT, default=13, show_default=True)
 @click.option(
     "-o",
@@ -19,11 +20,11 @@ from sklearn.model_selection import train_test_split
     help="Output file. By default prints to stdout.",
     default="-",
 )
-def main(out: TextIOWrapper, seed: int = 13) -> None:
+def main(out: TextIOWrapper, test_size: float = 0.2, seed: int = 13) -> None:
     dataset = load_breast_cancer()
     features, target = dataset["data"], dataset["target"]
     train_features, eval_features, train_target, eval_target = train_test_split(
-        features, target, test_size=0.2, random_state=seed
+        features, target, test_size=test_size, random_state=seed
     )
     for f, t in zip(train_features, train_target, strict=True):
         json.dump(

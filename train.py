@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 from hydra.utils import instantiate
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from jinja2 import StrictUndefined, Template
 import mlflow
 from mlflow.utils.git_utils import get_git_branch, get_git_commit
 from rich import print_json
@@ -41,12 +41,9 @@ from experiments.click_options import (
 @extra_vars_option
 @pass_state
 def main(state: State, config_path: Path) -> None:
-    jinja_env = Environment(
-        loader=FileSystemLoader([".", "/"]), undefined=StrictUndefined, autoescape=True
-    )
-    config = yaml.safe_load(
-        jinja_env.get_template(str(config_path)).render(**(state.extra_vars or {}))
-    )
+    with config_path.open("r", encoding="utf-8") as file:
+        tmpl = Template(file.read(), undefined=StrictUndefined, autoescape=True)
+        config = yaml.safe_load(tmpl.render(**(state.extra_vars or {})))
     if state.exp_dir is not None:
         state.exp_dir.mkdir(exist_ok=True)
     if state.use_mlflow:

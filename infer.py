@@ -7,7 +7,7 @@ from accelerate import Accelerator
 import click
 from hydra.utils import instantiate
 from ignite.handlers import EpochOutputStore
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from jinja2 import StrictUndefined, Template
 from rich.console import Console
 from safetensors.torch import load_model
 import torch
@@ -49,12 +49,9 @@ from experiments.trainer import Trainer
 @torch.no_grad()
 def main(state: State, config_path: Path, model_path: Path, out: TextIOWrapper) -> None:
     console = Console(file=sys.stderr)
-    jinja_env = Environment(
-        loader=FileSystemLoader([".", "/"]), undefined=StrictUndefined, autoescape=True
-    )
-    config = yaml.safe_load(
-        jinja_env.get_template(str(config_path)).render(**(state.extra_vars or {}))
-    )
+    with config_path.open("r", encoding="utf-8") as file:
+        tmpl = Template(file.read(), undefined=StrictUndefined, autoescape=True)
+        config = yaml.safe_load(tmpl.render(**(state.extra_vars or {})))
     accelerator = Accelerator()
     console.print_json(data=config)
     model = instantiate(config["model"])

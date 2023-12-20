@@ -24,7 +24,7 @@ datasets:
       _target_: movs_mlops_2023.datasets.dvc.Iter
       path: {{ datasets | default("data/cancer", true) }}/train.jsonl
     collate_fn:
-      _target_: movs_mlops_2023.datasets.jsonl.Collator
+      _target_: movs_mlops_2023.datasets.collator.Default
     batch_size: {{ batch_size | default(8, true) }}
     pin_memory: true
   eval:
@@ -33,7 +33,7 @@ datasets:
       _target_: movs_mlops_2023.datasets.dvc.Iter
       path: {{ datasets | default("data/cancer", true) }}/eval.jsonl
     collate_fn:
-      _target_: movs_mlops_2023.datasets.jsonl.Collator
+      _target_: movs_mlops_2023.datasets.collator.Default
     shuffle: false
     batch_size: {{ batch_size | default(8, true) }}
     pin_memory: true

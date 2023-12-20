@@ -1,5 +1,5 @@
 ---
-mlflow_uri: "http://localhost:8080"
+mlflow_uri: {{ mlflow_uri | default("http://localhost:8080", true) }}
 
 epochs: {{ epochs | default(15, true) }}
 

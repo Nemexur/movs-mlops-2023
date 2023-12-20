@@ -24,10 +24,18 @@ install.dvc:
 check: install.dep install.dvc
 	poetry run pre-commit install
 	poetry run pre-commit run --all-files
-	rm -rf $(PWD)/my-model
+	rm -rf $(DIR)/my-model
 	poetry run python train.py
 	poetry run python infer.py
-	head infer-results.csv
+	head $(DIR)/infer-results.csv
+
+#> Kill docker-compose services
+dco.kill:
+	@$(FLAGS) docker-compose rm --stop --force
+
+#> Run docker-compose services
+dco.up: dco.kill
+	@$(FLAGS) docker-compose up --build --force-recreate --remove-orphans -d
 
 .PHONY: clean
 #> Clean cached files

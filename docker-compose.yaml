@@ -1,0 +1,12 @@
+---
+version: "3.9"
+
+services:
+  mlflow:
+    image: "ghcr.io/mlflow/mlflow:latest"
+    ports:
+      - 8080:8080
+    command:
+      - mlflow
+      - ui
+      - --port=8080

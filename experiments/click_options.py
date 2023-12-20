@@ -74,7 +74,7 @@ class State:
     exp_dir: Path | None = None
     seed: int = 13
     debug: bool = False
-    use_wandb: bool = False
+    use_mlflow: bool = False
     extra_vars: dict[str, Any] | None = None
 
 
@@ -117,7 +117,7 @@ def name_option(default: str | None = None) -> Callable:
     return wrapper
 
 
-def dir_option(f: Callable) -> Callable:
+def dir_option(default: str | None = None) -> Callable:
     """
     Add dir option to CLI command.
 
@@ -132,22 +132,25 @@ def dir_option(f: Callable) -> Callable:
         Click command/group with new option.
     """
 
-    def callback(ctx: click.Context, _: click.core.Parameter, value: Path) -> Any:
-        state: State = ctx.ensure_object(State)
-        state.exp_dir = value
-        return value
+    def wrapper(f: Callable) -> Callable:
+        def callback(ctx: click.Context, _: click.core.Parameter, value: Path) -> Any:
+            state: State = ctx.ensure_object(State)
+            state.exp_dir = value
+            return value
 
-    return click.option(
-        "-d",
-        "--dir",
-        type=click.Path(exists=False, path_type=Path),
-        help="Experiment directory.",
-        callback=callback,
-        expose_value=False,
-        required=False,
-        default=None,
-        show_default=True,
-    )(f)
+        return click.option(
+            "-d",
+            "--dir",
+            type=click.Path(exists=False, path_type=Path),
+            help="Experiment directory.",
+            callback=callback,
+            expose_value=False,
+            required=False,
+            default=default,
+            show_default=True,
+        )(f)
+
+    return wrapper
 
 
 def debug_option(f: Callable) -> Callable:
@@ -211,9 +214,9 @@ def seed_option(f: Callable) -> Callable:
     )(f)
 
 
-def wandb_option(f: Callable) -> Callable:
+def no_mlflow_option(f: Callable) -> Callable:
     """
-    Add wandb option to CLI command.
+    Add mlflow option to CLI command.
 
     Parameters
     ----------
@@ -228,14 +231,15 @@ def wandb_option(f: Callable) -> Callable:
 
     def callback(ctx: click.Context, _: click.core.Parameter, value: bool) -> Any:
         state: State = ctx.ensure_object(State)
-        state.use_wandb = value
+        state.use_mlflow = not value
         return value
 
     return click.option(
-        "--wandb",
+        "--no-mlflow",
         is_flag=True,
-        help="Whether to enable wandb for the experiment or not.",
+        help="Whether to disable mlflow for the experiment or not.",
         callback=callback,
+        default=False,
         expose_value=False,
         required=False,
     )(f)

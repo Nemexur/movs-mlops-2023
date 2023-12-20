@@ -3,16 +3,15 @@ dataset:
   _target_: torch.utils.data.DataLoader
   dataset:
     _target_: movs_mlops_2023.datasets.jsonl.InMemory
-    path: {{ datasets }}/eval-no-target.jsonl
+    path: {{ datasets | default("data/cancer", true) }}/eval-no-target.jsonl
   collate_fn:
     _target_: movs_mlops_2023.datasets.jsonl.Collator
   shuffle: false
-  batch_size: {{ batch_size }}
+  batch_size: {{ batch_size | default(8, true) }}
   pin_memory: true
-  num_workers: 3
 
 model:
   _target_: movs_mlops_2023.models.Classification
-  in_features: {{ in_features }}
-  num_classes: {{ num_classes }}
+  in_features: {{ in_features | default(30, true) }}
+  num_classes: {{ num_classes | default(2, true) }}
   hidden_dim: {{ hidden_dim | default(100, true) }}

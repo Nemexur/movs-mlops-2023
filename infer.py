@@ -21,14 +21,27 @@ from experiments.trainer import Trainer
     help="Run infer.",
     context_settings={"help_option_names": ["-h", "--help"]},
 )
-@click.argument("config_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
-@click.argument("model_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option(
+    "--config-path",
+    help="Config path.",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=Path.cwd() / "configs/infer.yaml.j2",
+    show_default=True,
+)
+@click.option(
+    "--model-path",
+    help="Model path.",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=Path.cwd() / "my-model/best_iteration/model.safetensors",
+    show_default=True,
+)
 @click.option(
     "-o",
     "--out",
     type=click.File("w", encoding="utf-8"),
-    help="Output file. By default prints to stdout.",
-    default="-",
+    help="Output file.",
+    default=Path.cwd() / "infer-results.csv",
+    show_default=True,
 )
 @name_option("exp")
 @extra_vars_option
@@ -37,7 +50,7 @@ from experiments.trainer import Trainer
 def main(state: State, config_path: Path, model_path: Path, out: TextIOWrapper) -> None:
     console = Console(file=sys.stderr)
     jinja_env = Environment(
-        loader=FileSystemLoader("."), undefined=StrictUndefined, autoescape=True
+        loader=FileSystemLoader([".", "/"]), undefined=StrictUndefined, autoescape=True
     )
     config = yaml.safe_load(
         jinja_env.get_template(str(config_path)).render(**(state.extra_vars or {}))

@@ -22,16 +22,11 @@ install.dvc:
 .PHONY: check
 #> Run project evaluation jobs
 check: install.dep install.dvc
-	pre-commit install
-	pre-commit run --all-files
-	poetry run python experiments/train.py configs/train.yaml.j2 \
-		-d movs-mlops-2023-model \
-		--wandb \
-		--extra-vars "datasets=data/cancer,batch_size=8,in_features=30,num_classes=2"
-	poetry run python experiments/infer.py configs/infer.yaml.j2 \
-		movs-mlops-2023-model/best_iteration/model.safetensors \
-		-o infer-results.csv \
-		--extra-vars "datasets=data/cancer,batch_size=8,in_features=30,num_classes=2"
+	poetry run pre-commit install
+	poetry run pre-commit run --all-files
+	rm -rf $(PWD)/my-model
+	poetry run python train.py
+	poetry run python infer.py
 	head infer-results.csv
 
 .PHONY: clean

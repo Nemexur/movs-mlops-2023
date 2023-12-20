@@ -20,7 +20,7 @@ install.dvc:
 	poetry run dvc pull
 
 .PHONY: check
-#> Run project evaluation jobs
+#> Run project evaluation steps
 check: install.dep
 	poetry run pre-commit install
 	poetry run pre-commit run --all-files
@@ -29,10 +29,12 @@ check: install.dep
 	poetry run python infer.py
 	head $(DIR)/infer-results.csv
 
+.PHONY: dco.kill
 #> Kill docker-compose services
 dco.kill:
 	@$(FLAGS) docker-compose rm --stop --force
 
+.PHONY: dco.up
 #> Run docker-compose services
 dco.up: dco.kill
 	@$(FLAGS) docker-compose up --build --force-recreate --remove-orphans -d

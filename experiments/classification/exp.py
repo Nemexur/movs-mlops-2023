@@ -93,7 +93,7 @@ class ClassificationExperiment(Experiment):
                 automatic_checkpoint_naming=True,
             )
         accelerator.init_trackers(
-            project_name=settings.WANDB_PROJECT,
+            project_name=settings.MLFLOW_PROJECT,
             config=flatten_config(self._config),
             init_kwargs=self._trackers_params,
         )

@@ -1,1 +1,1 @@
-WANDB_PROJECT = "a-n-milogradskiy-movs-mlops-2023"
+MLFLOW_PROJECT = "a-n-milogradskiy-movs-mlops-2023"

@@ -16,6 +16,7 @@ from experiments.click_options import (
     name_option,
     pass_state,
     seed_option,
+    wandb_option,
 )
 
 
@@ -28,6 +29,7 @@ from experiments.click_options import (
 @dir_option
 @seed_option
 @debug_option
+@wandb_option
 @extra_vars_option
 @pass_state
 def main(state: State, config_path: Path) -> None:
@@ -45,6 +47,7 @@ def main(state: State, config_path: Path) -> None:
         dir=state.exp_dir,
         debug=state.debug,
         seed=state.seed,
+        trackers_params=({"wandb": {"name": state.exp_name}} if state.use_wandb else {}),
     )
     _ = exp.run()
     print_json(

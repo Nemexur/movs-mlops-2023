@@ -1,6 +1,6 @@
 # pyright: reportOptionalSubscript=false, reportOptionalMemberAccess=false
 
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 from pathlib import Path
 import shutil
 import tarfile
@@ -14,12 +14,19 @@ from loguru import logger
 import torch
 import yaml
 
-from experiments.trainer import Trainer
+from experiments.trainer import ModelEvents, Trainer
 
 BEST_ITERATION_PATH = "best_iteration"
 
 
-def attach_metrics(trainer: Trainer, metrics: dict[str, Metric] | None = None) -> None:
+def attach_metrics(
+    trainer: Trainer, accelerator: Accelerator, metrics: dict[str, Metric] | None = None
+) -> None:
+    def prepare_handler(engine: Engine) -> None:
+        batch = cast(dict[str, torch.Tensor], engine.state.batch)
+        output = cast(dict[str, torch.Tensor], engine.state.output)
+        output["y_pred"], output["y"] = output["logits"].argmax(dim=-1), batch["target"]
+
     if metrics is None:
         return
     metric_usage = MetricUsage(
@@ -28,9 +35,10 @@ def attach_metrics(trainer: Trainer, metrics: dict[str, Metric] | None = None) -
         iteration_completed=Events.ITERATION_COMPLETED,
     )
     for m in metrics.values():
-        m._output_transform = lambda out: (out["logits"], out["target"])  # noqa: W291, SLF001
-    for e in trainer.engines.values():
+        m._device = accelerator.device  # noqa: SLF001
+    for e_key, e in trainer.engines.items():
         e.state_dict_user_keys.append("metrics")
+        trainer.add_event(e_key, ModelEvents.FORWARD_COMPLETED, prepare_handler)
         for m_name, m in metrics.items():
             m.attach(e, name=m_name, usage=metric_usage)
 
@@ -42,13 +50,11 @@ def attach_checkpointer(
 ) -> None:
     def save_handler(engine: Engine) -> None:
         engine.state.save_location = accelerator.save_state()
-        if accelerator.is_local_main_process:
-            logger.info(f"checkpointer: saved checkpoint in {engine.state.save_location}")
+        logger.info(f"checkpointer: saved checkpoint in {engine.state.save_location}")
 
     def save_best_handler(engine: Engine) -> None:
         save_dir = Path(accelerator.project_dir) / BEST_ITERATION_PATH
-        if accelerator.is_local_main_process:
-            shutil.copytree(engine.state.save_location, save_dir, dirs_exist_ok=True)
+        shutil.copytree(engine.state.save_location, save_dir, dirs_exist_ok=True)
 
     for e in trainer.engines.values():
         accelerator.register_for_checkpointing(e)
@@ -92,8 +98,6 @@ def attach_log_epoch_metrics(trainer: Trainer, accelerator: Accelerator) -> None
             for k, v in engine.state.metrics.items()
             if not k.startswith("_")
         }
-        if not accelerator.is_local_main_process:
-            return
         if len(metrics) == 0:
             return
         run_type = engine.state.name

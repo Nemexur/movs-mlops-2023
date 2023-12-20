@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "src"
+name = "movs-mlops-2023"
 version = "0.0.1"
 description = ""
 authors = ["nemexur <alex.milogradsky@gmail.com>"]
@@ -23,6 +23,7 @@ hydra-core = "^1.3.2"
 pytorch-ignite = "^0.4.13"
 accelerate = "^0.25.0"
 safetensors = "^0.4.1"
+wandb = "^0.16.1"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.18.1"

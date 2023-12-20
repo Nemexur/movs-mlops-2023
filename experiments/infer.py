@@ -1,5 +1,5 @@
+import csv
 from io import TextIOWrapper
-import json
 from pathlib import Path
 import sys
 
@@ -50,13 +50,15 @@ def main(state: State, config_path: Path, model_path: Path, out: TextIOWrapper) 
     trainer = Trainer(model=model, optimizer=None, accelerator=accelerator)
     EpochOutputStore().attach(trainer.engines["eval"], name="result")
     state = trainer.engines["eval"].run(dataset)
+    # Write result
     sample_id = 0
-    for s, r in zip(dataset, state.result, strict=True):
-        features = s["features"].cpu().numpy().tolist()
-        labels = r["logits"].argmax(dim=-1).cpu().numpy().tolist()
-        for f, l in zip(features, labels, strict=True):
-            json.dump({"id": sample_id, "features": f, "result": l}, out, ensure_ascii=False)
-            out.write("\n")
+    out_writer = csv.DictWriter(out, fieldnames=("id", "prob", "label"))
+    out_writer.writeheader()
+    for r in state.result:
+        labels = r["logits"].argmax(dim=-1)
+        probs = r["probs"][torch.arange(r["probs"].size(0)), labels]
+        for p, l in zip(probs.cpu().numpy().tolist(), labels.cpu().numpy().tolist(), strict=True):
+            out_writer.writerow({"id": sample_id, "prob": round(p, 4), "label": l})
             sample_id += 1
 
 

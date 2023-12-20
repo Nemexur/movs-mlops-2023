@@ -1,9 +1,14 @@
 from typing import Any, Callable
 
 from accelerate import Accelerator
-from ignite.engine import Engine, Events, State
+from ignite.engine import Engine, EventEnum, Events, State
 import torch
 from torch.utils.data import DataLoader
+
+
+class ModelEvents(EventEnum):
+    FORWARD_STARTED = "forward_started"
+    FORWARD_COMPLETED = "forward_completed"
 
 
 class Trainer:
@@ -47,7 +52,9 @@ class Trainer:
         self.model.train()
         with self._accelerator.accumulate(self.model):
             state = engine.state
+            engine.fire_event(ModelEvents.FORWARD_STARTED)
             output = state.output = self.model(batch)
+            engine.fire_event(ModelEvents.FORWARD_COMPLETED)
             if "loss" not in output:
                 return output
             self._accelerator.backward(output["loss"])
@@ -60,12 +67,17 @@ class Trainer:
         self.model.eval()
         with torch.no_grad():
             state = engine.state
+            engine.fire_event(ModelEvents.FORWARD_STARTED)
             output = state.output = self.model(batch)
+            engine.fire_event(ModelEvents.FORWARD_COMPLETED)
             if "loss" in output:
                 state.metrics["_loss"] += output["loss"].detach()
             return output
 
     def _add_events(self) -> None:
+        for e in self.engines.values():
+            for events in (ModelEvents,):
+                e.register_events(*events)
         self.add_event("train", Events.EPOCH_STARTED | Events.COMPLETED, self._run_eval)
         events = (
             (Events.EPOCH_STARTED, self._reset_epoch),

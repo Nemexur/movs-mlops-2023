@@ -11,6 +11,7 @@ from ignite.metrics import Metric
 from rich import print_json
 import torch
 
+from experiments import settings
 from experiments.base import Experiment
 from experiments.options import (
     attach_best_exp_saver,
@@ -21,6 +22,7 @@ from experiments.options import (
     attach_progress_bar,
 )
 from experiments.trainer import Trainer
+from experiments.utils import flatten_config
 
 
 class ClassificationExperiment(Experiment):
@@ -48,8 +50,7 @@ class ClassificationExperiment(Experiment):
 
     def run(self) -> Any:
         self._accelerator = self._get_accelerator()
-        if self._accelerator.is_local_main_process:
-            print_json(data=self._config)
+        print_json(data=self._config)
         self._model = self._accelerator.prepare(instantiate(self._config["model"]))
         self._optimizer = self._accelerator.prepare(
             instantiate(self._config["optimizer"])(self._model.parameters())
@@ -91,37 +92,32 @@ class ClassificationExperiment(Experiment):
                 project_dir=str(self._dir),
                 automatic_checkpoint_naming=True,
             )
+        accelerator.init_trackers(
+            project_name=settings.WANDB_PROJECT,
+            config=flatten_config(self._config),
+            init_kwargs=self._trackers_params,
+        )
         self._seed_everything()
         return accelerator
 
-    def _get_trainer(
-        self,
-        model: torch.nn.Module,
-        optimizer: torch.optim.Optimizer,
-    ) -> Trainer:
-        trainer = Trainer(
-            model,
-            optimizer=optimizer,
-            accelerator=self._accelerator,
-        )
+    def _get_trainer(self, model: torch.nn.Module, optimizer: torch.optim.Optimizer) -> Trainer:
+        trainer = Trainer(model, optimizer=optimizer, accelerator=self._accelerator)
         if self._debug:
             attach_debug_handler(trainer, num_iters=2000)
-        attach_metrics(trainer, self._metrics)
-        if self._accelerator.is_local_main_process:
-            attach_progress_bar(
-                trainer,
-                metric_names={
-                    "eval": ["loss"] + list(self._metrics),
-                    "train": ["loss"] + list(self._metrics),
-                },
-            )
+        attach_metrics(trainer, self._accelerator, self._metrics)
+        attach_progress_bar(
+            trainer,
+            metric_names={
+                "eval": ["loss"] + list(self._metrics),
+                "train": ["loss"] + list(self._metrics),
+            },
+        )
         attach_log_epoch_metrics(trainer, self._accelerator)
         if self._dir is not None:
             attach_checkpointer(
                 trainer, self._accelerator, checkpoint_objects=self._metrics.values()
             )
-            if self._accelerator.is_local_main_process:
-                attach_best_exp_saver(trainer, self._dir, config=self._config)
+            attach_best_exp_saver(trainer, self._dir, config=self._config)
         for key, e in self._events.items():
             for event, handler in e:
                 trainer.add_event(key, event, handler, accelerator=self._accelerator)

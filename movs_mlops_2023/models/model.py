@@ -15,6 +15,5 @@ class Classification(torch.nn.Module):
         logits = self._model(inputs["features"])
         output_dict = {"logits": logits, "probs": logits.softmax(dim=-1)}
         if (target := inputs.get("target")) is not None:
-            output_dict["target"] = target
             output_dict["loss"] = self._loss(logits, target)
         return output_dict

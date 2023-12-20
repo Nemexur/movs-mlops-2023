@@ -1,5 +1,5 @@
 from typing import Any, Callable, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 import re
 
@@ -76,8 +76,6 @@ class State:
     debug: bool = False
     use_wandb: bool = False
     extra_vars: dict[str, Any] | None = None
-    search_hp: SearchHP = field(default_factory=SearchHP)
-    early_stopping: EarlyStopping = field(default_factory=EarlyStopping)
 
 
 pass_state = click.make_pass_decorator(State, ensure=True)
@@ -210,6 +208,36 @@ def seed_option(f: Callable) -> Callable:
         required=False,
         default=13,
         show_default=True,
+    )(f)
+
+
+def wandb_option(f: Callable) -> Callable:
+    """
+    Add wandb option to CLI command.
+
+    Parameters
+    ----------
+    f: Callable
+        Click command/group.
+
+    Returns
+    -------
+    Callable
+        Click command/group with new option.
+    """
+
+    def callback(ctx: click.Context, _: click.core.Parameter, value: bool) -> Any:
+        state: State = ctx.ensure_object(State)
+        state.use_wandb = value
+        return value
+
+    return click.option(
+        "--wandb",
+        is_flag=True,
+        help="Whether to enable wandb for the experiment or not.",
+        callback=callback,
+        expose_value=False,
+        required=False,
     )(f)
 
 

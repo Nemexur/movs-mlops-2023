@@ -21,7 +21,7 @@ install.dvc:
 
 .PHONY: check
 #> Run project evaluation jobs
-check: install.dep install.dvc
+check: install.dep
 	poetry run pre-commit install
 	poetry run pre-commit run --all-files
 	rm -rf $(DIR)/my-model

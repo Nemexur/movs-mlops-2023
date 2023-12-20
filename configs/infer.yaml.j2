@@ -2,7 +2,7 @@
 dataset:
   _target_: torch.utils.data.DataLoader
   dataset:
-    _target_: movs_mlops_2023.datasets.jsonl.InMemory
+    _target_: movs_mlops_2023.datasets.dvc.Iter
     path: {{ datasets | default("data/cancer", true) }}/eval-no-target.jsonl
   collate_fn:
     _target_: movs_mlops_2023.datasets.jsonl.Collator

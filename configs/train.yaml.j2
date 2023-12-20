@@ -1,7 +1,7 @@
 ---
 mlflow_uri: {{ mlflow_uri | default("http://localhost:8080", true) }}
 
-epochs: {{ epochs | default(15, true) }}
+epochs: {{ epochs | default(8, true) }}
 
 experiment:
   _target_: experiments.classification.Experiment
@@ -21,17 +21,16 @@ datasets:
   train:
     _target_: torch.utils.data.DataLoader
     dataset:
-      _target_: movs_mlops_2023.datasets.jsonl.InMemory
+      _target_: movs_mlops_2023.datasets.dvc.Iter
       path: {{ datasets | default("data/cancer", true) }}/train.jsonl
     collate_fn:
       _target_: movs_mlops_2023.datasets.jsonl.Collator
-    shuffle: true
     batch_size: {{ batch_size | default(8, true) }}
     pin_memory: true
   eval:
     _target_: torch.utils.data.DataLoader
     dataset:
-      _target_: movs_mlops_2023.datasets.jsonl.InMemory
+      _target_: movs_mlops_2023.datasets.dvc.Iter
       path: {{ datasets | default("data/cancer", true) }}/eval.jsonl
     collate_fn:
       _target_: movs_mlops_2023.datasets.jsonl.Collator

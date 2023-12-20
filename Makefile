@@ -25,7 +25,7 @@ check: install.dep
 	poetry run pre-commit install
 	poetry run pre-commit run --all-files
 	rm -rf $(DIR)/my-model
-	poetry run python train.py
+	poetry run python train.py --extra-vars "mlflow_uri=http://localhost:8080"
 	poetry run python infer.py
 	head $(DIR)/infer-results.csv
 

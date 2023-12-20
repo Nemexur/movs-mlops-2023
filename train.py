@@ -4,6 +4,7 @@ import click
 from hydra.utils import instantiate
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import mlflow
+from mlflow.utils.git_utils import get_git_branch, get_git_commit
 from rich import print_json
 import torch
 import yaml
@@ -56,7 +57,19 @@ def main(state: State, config_path: Path) -> None:
         dir=state.exp_dir,
         debug=state.debug,
         seed=state.seed,
-        trackers_params=({"mlflow": {"run_name": state.exp_name}} if state.use_mlflow else {}),
+        trackers_params=(
+            {
+                "mlflow": {
+                    "run_name": state.exp_name,
+                    "tags": {
+                        "commit": get_git_commit(Path.cwd()),
+                        "branch": get_git_branch(Path.cwd()),
+                    },
+                },
+            }
+            if state.use_mlflow
+            else {}
+        ),
     )
     _ = exp.run()
     print_json(

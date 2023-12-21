@@ -1,24 +1,14 @@
 # movs-mlops-2023
 
+## Описание задачи
+
+Решил взять датасет [Breast Cancer](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_breast_cancer.html).
+Решаю задачу классификации по определению злокачественных опухолей на основе признаков,
+полученных в результате анализа груди.
+
 ## Как подготовить датасет?
 
 0. Сделать `dvc pull` или `mkdir -p data/{gen,cancer}`
-
-### Сгенерированный
-
-1. Генерация
-
-```bash
-python scripts/gen_dataset.py --seed 13 --n-samples 150000 > data/gen/full-dataset.jsonl
-```
-
-2. Получим train/eval через miller
-
-```bash
-mlr --jsonl filter '$part == "train"' + cut -f features,target data/gen/full-dataset.jsonl > data/gen/train.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features,target data/gen/full-dataset.jsonl > data/gen/eval.jsonl
-mlr --jsonl filter '$part == "eval"' + cut -f features data/gen/full-dataset.jsonl > data/gen/eval-no-target.jsonl
-```
 
 ### Breast Cancer
 
@@ -36,13 +26,18 @@ mlr --jsonl filter '$part == "eval"' + cut -f features,target data/cancer/full-d
 mlr --jsonl filter '$part == "eval"' + cut -f features data/cancer/full-dataset.jsonl > data/cancer/eval-no-target.jsonl
 ```
 
-## Как обучить модель?
+## Модель
+
+Модель можно найти в этом [файле](movs_mlops_2023/models/model.py).
+
+### Как обучить модель?
 
 Конфиги для train/infer моделей сделаны через jinja,
-поэтому им обязательно нужно добавить переменные: datasets, batch_size, in_features, num_classes, hidden_dim (default=100)
+Можно переопределить след параметры: mlflow_uri, epochs, datasets, batch_size, in_features, num_classes, hidden_dim.
+Для всех из них в конфиге стоят дефолты.
 
 ```bash
-python experiments/cmd/train.py configs/train.yaml.j2 \
+python train.py configs/train.yaml.j2 \
   -d {директория для сохранения checkpoints} \
   --extra-vars datasets={директория с файлами {data/gen,data/cancer}},batch_size={your input},in_features={your input},num_classes={your input}
 ```
@@ -53,6 +48,6 @@ python experiments/cmd/train.py configs/train.yaml.j2 \
 значение extra-vars должно быть равно тем, что присутствовали во время запуска train.py.
 
 ```bash
-python experiments/cmd/infer.py configs/infer.yaml.j2 {директория из пред этапа}/best_iteration/model.safetensors \
+python infer.py configs/infer.yaml.j2 {директория из пред этапа}/best_iteration/model.safetensors \
   --extra-vars datasets={директория с файлами {data/gen,data/cancer}},batch_size={your input},in_features={your input},num_classes={your input}
 ```

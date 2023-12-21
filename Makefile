@@ -21,13 +21,12 @@ install.dvc:
 
 .PHONY: check
 #> Run project evaluation steps
-check: install.dep
+check: install.dep dco.up
 	poetry run pre-commit install
 	poetry run pre-commit run --all-files
 	rm -rf $(DIR)/my-model
 	poetry run python train.py --extra-vars "mlflow_uri=http://localhost:8080"
-	poetry run python infer.py
-	head $(DIR)/infer-results.csv
+	poetry run python infer.py -o - | head
 
 .PHONY: dco.kill
 #> Kill docker-compose services

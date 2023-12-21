@@ -156,13 +156,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "alembic"
-version = "1.13.0"
+version = "1.13.1"
 description = "A database migration tool for SQLAlchemy."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "alembic-1.13.0-py3-none-any.whl", hash = "sha256:a23974ea301c3ee52705db809c7413cecd165290c6679b9998dd6c74342ca23a"},
-    {file = "alembic-1.13.0.tar.gz", hash = "sha256:ab4b3b94d2e1e5f81e34be8a9b7b7575fc9dd5398fccb0bef351ec9b14872623"},
+    {file = "alembic-1.13.1-py3-none-any.whl", hash = "sha256:2edcc97bed0bd3272611ce3a98d98279e9c209e7186e43e75bbb1b2bdfdbcc43"},
+    {file = "alembic-1.13.1.tar.gz", hash = "sha256:4932c8558bf68f2ee92b9bbcb8218671c627064d5b08939437af6d77dc05e595"},
 ]
 
 [package.dependencies]
@@ -1268,13 +1268,13 @@ pgp = ["gpg"]
 
 [[package]]
 name = "dvc"
-version = "3.34.0"
+version = "3.35.0"
 description = "Git for data scientists - manage your code and data together"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "dvc-3.34.0-py3-none-any.whl", hash = "sha256:3052fb984af2985144d1de4893a6edb3970fc2ca7e885e26d77a5098015205da"},
-    {file = "dvc-3.34.0.tar.gz", hash = "sha256:264020cacd2ebf3234fdc3c1af327d81426aca41ac06d7eb0cc9d99a81127ea0"},
+    {file = "dvc-3.35.0-py3-none-any.whl", hash = "sha256:ee18f5cf408d2430610e55d12099a879346c1be6ee9de0a2f08928e59da2120f"},
+    {file = "dvc-3.35.0.tar.gz", hash = "sha256:d3745f01dfded6f89dbb7a8a12d1fd5afb1252fb8755c2b512c29b934f62c866"},
 ]
 
 [package.dependencies]
@@ -1282,7 +1282,7 @@ colorama = ">=0.3.9"
 configobj = ">=5.0.6"
 distro = ">=1.3"
 dpath = ">=2.1.0,<3"
-dvc-data = ">=3,<3.1"
+dvc-data = ">=3.1,<3.2"
 dvc-http = ">=2.29.0"
 dvc-render = ">=1.0.0,<2"
 dvc-studio-client = ">=0.17.1,<1"
@@ -1334,13 +1334,13 @@ webhdfs-kerberos = ["dvc-webhdfs[kerberos] (>=3,<4)"]
 
 [[package]]
 name = "dvc-data"
-version = "3.0.1"
+version = "3.1.0"
 description = "DVC's data management subsystem"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "dvc-data-3.0.1.tar.gz", hash = "sha256:4ec9f7a254ab0c89dafddf1a27de2f45d7eb65467235a67543b9556eb6de0fee"},
-    {file = "dvc_data-3.0.1-py3-none-any.whl", hash = "sha256:caff884c17ab7c604467c5f35ed5dd2c1256bc0b0015dd7553435673cb178a72"},
+    {file = "dvc-data-3.1.0.tar.gz", hash = "sha256:14ff2d78946ee9caa57b8910eba32f7abec746b4f8d8791548759b16d4607682"},
+    {file = "dvc_data-3.1.0-py3-none-any.whl", hash = "sha256:3d38073e1498c282e0e800b842a0c529b05e494aa18935b7da8ecbb0a3b59c2b"},
 ]
 
 [package.dependencies]
@@ -3640,11 +3640,7 @@ files = [
 ]
 
 [package.dependencies]
-numpy = [
-    {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
-    {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
-    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
-]
+numpy = {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""}
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
 tzdata = ">=2022.1"
@@ -4221,7 +4217,6 @@ files = [
 
 [package.dependencies]
 cffi = ">=1.16.0"
-setuptools = {version = "*", markers = "python_version >= \"3.12\""}
 
 [[package]]
 name = "pygments"
@@ -4280,11 +4275,7 @@ files = [
 [package.dependencies]
 astroid = ">=3.0.1,<=3.1.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-dill = [
-    {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.7", markers = "python_version >= \"3.12\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
-]
+dill = {version = ">=0.2", markers = "python_version < \"3.11\""}
 isort = ">=4.2.5,<5.13.0 || >5.13.0,<6"
 mccabe = ">=0.6,<0.8"
 platformdirs = ">=2.2.0"
@@ -6166,5 +6157,5 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">3.10,<=3.13"
-content-hash = "61cd10ab088b6770d5dd03dfa15d2377192b140862c0b3396beae87a95b14265"
+python-versions = "~3.10"
+content-hash = "4319797d3f3796c3577970fa5bcd8c4578fc38b7516fd619d55cc2879d3d2667"

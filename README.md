@@ -41,7 +41,7 @@ mlr --jsonl filter '$part == "eval"' + cut -f features data/cancer/full-dataset.
 
 ### Как обучить модель?
 
-Конфиги для train/infer моделей сделаны через jinja,
+Конфиги для [train](configs/train.yaml.j2)/[infer](configs/infer.yaml.j2) моделей сделаны через jinja,
 Можно переопределить след параметры: mlflow_uri, epochs, datasets, batch_size, in_features, num_classes, hidden_dim.
 Для всех из них в конфиге стоят дефолты.
 

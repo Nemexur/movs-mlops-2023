@@ -11,7 +11,7 @@ class Classification(torch.nn.Module):
         )
         self._loss = torch.nn.CrossEntropyLoss()
 
-    def forward(self, inputs: dict[str, torch.Tensor]) -> None:
+    def forward(self, inputs: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
         logits = self._model(inputs["features"])
         output_dict = {"logits": logits, "probs": logits.softmax(dim=-1)}
         if (target := inputs.get("target")) is not None:

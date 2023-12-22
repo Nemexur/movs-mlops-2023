@@ -1,4 +1,4 @@
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 from dataclasses import dataclass
 from pathlib import Path
 import re
@@ -18,9 +18,9 @@ class DictParamType(click.types.ParamType):
     def convert(
         self,
         value: str,
-        param: Optional[click.core.Parameter],
-        ctx: Optional[click.core.Context],
-    ) -> Optional[dict[str, Any]]:
+        param: click.core.Parameter | None,
+        ctx: click.core.Context | None,
+    ) -> dict[str, Any] | None:
         """
         Convert value to an appropriate representation.
 
@@ -28,14 +28,14 @@ class DictParamType(click.types.ParamType):
         ----------
         value: str
             Value assigned to a parameter.
-        param: Optional[click.core.Parameter]
+        param: click.core.Parameter | None
             Parameter with assigned value.
-        ctx: Optional[click.core.Context]
+        ctx: click.core.Context | None
             Context for CLI.
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any] | None
             Key-Value dictionary of parameters.
         """
         extra_vars = super().convert(value=value, param=param, ctx=ctx)

@@ -34,6 +34,9 @@ jobs:
         with:
           poetry-version: "1.7.1"
       - name: Check project evaluation steps
+        env:
+          REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GDRIVE_CREDENTIALS_DATA : "${{ secrets.GDRIVE_CREDENTIALS_DATA }}"
         run: |
           poetry install
           poetry run pre-commit install
